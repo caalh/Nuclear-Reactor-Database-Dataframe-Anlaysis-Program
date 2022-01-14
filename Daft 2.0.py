@@ -468,7 +468,7 @@ class app:
             #data base files and input files for user edits
             
             #importing database sheet
-            file="C:\\Users\\Aaron.Calhoun\\OneDrive - West Point\\All\\N_Python\\total.xlsx"
+            file="Database.xlsx"
             workbook = load_workbook(filename=file)
             workbook.sheetnames
             ['Sheet 1']
