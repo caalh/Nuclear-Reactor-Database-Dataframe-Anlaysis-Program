@@ -36,7 +36,7 @@ def is_number(n):
 #importing database sheet
 
 #PLEASE RESTATE THE FILE ADDRESS FOR THE EXCEL SHEET
-file="C:\\Users\\Aaron.Calhoun\\OneDrive - West Point\\All\\N_Python\\total.xlsx" 
+file="Database.xlsx"
 workbook = load_workbook(filename=file)
 workbook.sheetnames
 ['Sheet 1']
