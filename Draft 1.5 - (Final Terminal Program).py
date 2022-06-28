@@ -1,9 +1,9 @@
 #This project was designed and created
-#    by CDT Aaron W. Calhoun class of 2024 (H-2).
+#    by CDT Aaron W. Calhoun class of 2024 (G-4).
 
-#Draft:1.0
+#Draft:1.5
 #Started: Febuary 2021
-#Draft Complete: August 25, 2021 
+#Draft Complete: June 28, 2022 
 #Email: aaron.calhoun@westpoint.edu
 
 
@@ -12,7 +12,7 @@
 #   for their desired characteristics.
 
 #This program would not would not be possible without 
-#   the help and guidance of Dr. Kenith Allen (United States Military Acadmey at West Point).
+#   the help and guidance of Dr. Kenneth Allen (United States Military Acadmey at West Point).
     
 
 
@@ -118,7 +118,7 @@ else:
     index = -1
     for x in range(0,C):
         
-        index = index + 1
+        index += 1
         
         for y in range(0,R):
             cell1 = str(df.iat[y,index]) 
@@ -139,7 +139,7 @@ else:
     A = [] # values 
     AA = [] # weights for quant
     RN = [] #reactor name
-    RV = [] #replacement or null values for qual
+    DQ = [] #desired or null values for qual
     NV = [] # null values for quant
     WQual = []
     #asking values and weights and getting reactor names 
@@ -151,8 +151,8 @@ else:
         AA.append(int(input(quant[x]+" weight (number):")))
     
     for x in range(len(qual)-1):
+        DQ.append(input("State the " + qual[x+1] + " of your reactor:"))
         WQual.append(int(input(qual[x+1] + " weight:")))
-        RV.append(input("Name a suitable replacement for " + qual[x+1] + " of your reactor:"))
 
    
  #inputing values into sheet
@@ -167,6 +167,7 @@ else:
     df_Sub = pd.DataFrame(DataCalc)
 
 
+
     #weight totals
     Wsum = float(sum(WQual)+sum(AA))
     GV = [] #given values from user 
@@ -176,6 +177,7 @@ else:
     W = AA
     # for x in range(len(GV)):
         #con = user input of acceptable solution 
+        
         #completes the transformation for sub-totals
 
     for cc in range(0,len(GV)):
@@ -186,27 +188,34 @@ else:
             if is_number(GV[cc]) == False:                 
                 if str(GV[cc]) == "TBD":
                   S = 0 #Sub-score
+                  df_Sub.at[cc,str(quant[rr-2])] = S
                   
                 elif str(GV[cc]) in NV:
                   S = 1
+                  df_Sub.at[cc,str(quant[rr-2])] = S*(float(W[cc])/float(Wsum))
                   
                 else:
                   S = 0 
-
-                df_Sub.at[cc,str(quant[rr-2])] = S
+                  df_Sub.at[cc,str(quant[rr-2])] = S
                 
             else:
                 if is_number(cell2) == True: 
                     AV= float(cell2) #actual value of a given reactor
-                    df_Sub.at[rr-2,str(quant[cc])] = (1/((pow(pow((float(GV[cc])-float(AV)),2.0),0.5))/float(AV)))*float(W[cc])/float(Wsum)
+                    diff = (pow(pow((float(GV[cc])-float(AV)),2.0),0.5))/float(AV)
+                    if diff >= 1:
+                        diff = 0
+                    else:
+                        diff = diff
+                    df_Sub.at[rr-2,str(quant[cc])] = (diff)*(float(W[cc])/float(Wsum))
                     
                 else:
                     AV = 0 
                     df_Sub.at[rr-2,str(quant[cc])] = AV
+    
 
 
-        #completes the transformation for sub-totals
-    for cc in range(1,len(RV)+1):
+
+    for cc in range(1,len(DQ)+1):
         for rr in range(2,R+1):
             
             cell2 = str(df.at[rr-2,str(qual[cc])])
@@ -214,20 +223,28 @@ else:
             if is_number(cell2) == False:                
                 if str(cell2) == "TBD":
                   S = 0 #Sub-score
+                  df_Sub.at[rr-2,str(qual[cc])] = S
                   
-                elif str(RV[cc-1]) == cell2:
-                  S = 1
+                elif str(DQ[cc-1]) == cell2:
+                  S = 0
                   
                 else:
                     S = 0
                 df_Sub.at[rr-2,str(qual[cc])] = S
-                
+                                
             else:
-                AV= float(cell2) #actual value of a given reactor
-                df_Sub.at[rr-2,str(qual[cc])] = (1/((pow(pow((float(RV[cc-1])-float(AV)),2.0),0.5))/float(RV[cc-1])))*float(W[cc])/float(Wsum)
-            
-                # AV = 0 
-                # df_Sub.at[rr-2,str(qual[cc])] = AV
+                if is_number(cell2) == True: 
+                    AV= float(cell2)
+                    diff = (pow(pow((float(DQ[cc-1])-float(AV)),2.0),0.5))/float(DQ[cc-1])
+                    if diff >= 1:
+                        diff = 0
+                    else:
+                        diff = diff
+                    df_Sub.at[rr-2,str(qual[cc])] = ((diff))*float(W[cc])/float(Wsum)
+                
+                else:
+                    AV = 0 
+                    df_Sub.at[rr-2,str(quant[cc])] = AV
 
 
     #calculates final total for reactors and finds heightest value
@@ -247,6 +264,10 @@ else:
         dc[str(df_Sub.at[i,str("Reactor")])] = SOL[i]
     
     
+    
+    print(W)
     ThreeHighest = nlargest(R-1, dc, key = dc.get)
     for val in ThreeHighest:
-        print(val, " : ", dc.get(val))
+        print(val, " : ", round(float(dc.get(val)),4))
+     
+     

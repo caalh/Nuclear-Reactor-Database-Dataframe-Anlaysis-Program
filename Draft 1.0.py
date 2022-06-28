@@ -12,7 +12,7 @@
 #   for their desired characteristics.
 
 #This program would not would not be possible without 
-#   the help and guidance of Dr. Kenith Allen (United States Military Acadmey at West Point).
+#   the help and guidance of Dr. Kenneth Allen (United States Military Acadmey at West Point).
     
 
 
