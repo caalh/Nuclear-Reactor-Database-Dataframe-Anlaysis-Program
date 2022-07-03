@@ -3,7 +3,7 @@
 
 #Draft:1.5
 #Started: Febuary 2021
-#Draft Complete: June 28, 2022 
+#Draft Complete: July 4, 2022 
 #Email: aaron.calhoun@westpoint.edu
 
 
@@ -15,12 +15,14 @@
 #   the help and guidance of Dr. Kenneth Allen
 #   (United States Military Acadmey at West Point)
 #   and LTC Jonathan Baker (United States Military Acadmey at West Point).
-    
 
 
 from openpyxl import load_workbook 
 import pandas as pd
 from heapq import nlargest
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
 
 
  
@@ -253,7 +255,7 @@ else:
     
     print(df_Sub)
     SOL = []
-    for y in range(2,R-1):
+    for y in range(0,R-1):
         Numb = float(0)
         for x in range(2,C):
             Numb = Numb + float(df_Sub.at[y,str(col[x])])
@@ -261,15 +263,43 @@ else:
         
     
     
+    
     dc = {}
     for i in range(0,R-3):
         dc[str(df_Sub.at[i,str("Reactor")])] = SOL[i]
     
     
-    
-    print(W)
     ThreeHighest = nlargest(R-1, dc, key = dc.get)
     for val in ThreeHighest:
         print(val, " : ", round(float(dc.get(val)),4))
      
-     
+
+
+class app:
+    def __init__(self,window):
+        
+
+        
+        self.window = window
+        self.window.title("Nuclear Reactors: Dataframe Analysis")
+        
+        for cc in range(0,len(col)-1):
+              for rr in range(0,R-1):
+                  
+                          
+                 a = str(df_Sub.at[rr,str(col[cc])])
+                 if is_number(a) == True:
+                     a = round(float(a),3)
+                     
+                 tk.Label(self.window, text=str(col[cc])).grid(row=1,column=cc)
+                 tk.Label(self.window, text=str(a)).grid(row=rr+2,column=cc)
+                 
+        for rr in range(len(SOL)+1):
+            tk.Label(self.window, text=str("Total Scores (w/ Weight)")).grid(row=1,column=C)
+            tk.Label(self.window, text=str(round(float(SOL[rr-1]),3))).grid(row=rr+1,column=C)
+                              
+         
+window=tk.Tk()
+start=app(window)
+window.mainloop() 
+  
